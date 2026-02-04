@@ -218,3 +218,36 @@ setInterval(spawnSparkle, 260);
 // Initial placement
 moveNoTo(null);
 window.addEventListener("resize", () => moveNoTo(null));
+// === iPhone Safari fix: viewport changes / address bar ===
+function refreshLayoutFix() {
+  // Re-place NO safely after Safari changes the viewport
+  moveNoTo(null);
+}
+
+// iPhone rotation
+window.addEventListener("orientationchange", () => {
+  setTimeout(refreshLayoutFix, 150);
+  setTimeout(refreshLayoutFix, 350);
+});
+
+// Normal resize
+window.addEventListener("resize", () => {
+  setTimeout(refreshLayoutFix, 120);
+});
+
+// Safari iOS address bar / visual viewport resize
+if (window.visualViewport) {
+  visualViewport.addEventListener("resize", () => {
+    setTimeout(refreshLayoutFix, 80);
+  });
+  visualViewport.addEventListener("scroll", () => {
+    setTimeout(refreshLayoutFix, 80);
+  });
+}
+
+// Also fix it once after load (Safari needs a beat)
+window.addEventListener("load", () => {
+  setTimeout(refreshLayoutFix, 200);
+  setTimeout(refreshLayoutFix, 600);
+});
+
