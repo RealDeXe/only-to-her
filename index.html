@@ -24,9 +24,19 @@
     </section>
 
     <section class="result" id="result" aria-live="polite">
-      <p class="big">YAAAY!! 🥹💞</p>
-      <p class="small" id="finalLine">You just made my day.</p>
-    </section>
+  <p class="big">YAAAY!! 🥹💞</p>
+  <p class="small" id="finalLine">You just made my day.</p>
+
+  <!-- NEW: Instagram input -->
+  <div class="igBox">
+    <label class="igLabel" for="igInput">Drop your Instagram 😌</label>
+    <div class="igRow">
+      <input id="igInput" type="text" placeholder="@yourname" autocomplete="off" />
+      <button id="igSave" type="button">Send</button>
+    </div>
+    <p class="igDone" id="igDone" style="display:none;"></p>
+  </div>
+</section>
 
     <p class="footer">Made with ❤️ By 3lw.one</p>
   </main>
