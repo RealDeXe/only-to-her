@@ -1,6 +1,6 @@
 // === Customize here ===
 const NAME = "DoDo";
-const FINAL_MESSAGE = "Ok bet 😌 be ready i'll pick u up at 18h aight ?";
+const FINAL_MESSAGE = "😌 so this is a yes bkhatrk yak hh ?";
 
 document.getElementById("herName").textContent = NAME;
 document.getElementById("finalLine").textContent = FINAL_MESSAGE;
