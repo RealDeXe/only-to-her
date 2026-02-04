@@ -25,6 +25,7 @@ body{
   overflow:hidden;
 }
 
+/* Soft moving background */
 @keyframes bgFlow{
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
@@ -41,6 +42,7 @@ body{
   z-index:0;
 }
 
+/* Floating hearts (subtle) */
 .bg-heart{
   position:absolute;
   bottom:-40px;
@@ -50,11 +52,18 @@ body{
 }
 
 @keyframes floatBg{
-  from{ transform: translateY(0) scale(0.9); opacity:0; }
+  from{
+    transform: translateY(0) scale(0.9);
+    opacity:0;
+  }
   12%{ opacity:0.16; }
-  to{ transform: translateY(-110vh) scale(1.2); opacity:0; }
+  to{
+    transform: translateY(-110vh) scale(1.2);
+    opacity:0;
+  }
 }
 
+/* Floating sparkles */
 .bg-sparkle{
   position:absolute;
   top:-20px;
@@ -93,6 +102,7 @@ body{
     0 0 110px #ffffff35;
 }
 
+/* Glow ring */
 .card::before{
   content:"";
   position:absolute;
@@ -126,21 +136,23 @@ h1{
   font-weight: 700;
 }
 
-/* ✅ Button area */
+/* ✅ BUTTON AREA: enough room for NO to dodge */
 .btns{
   display:flex;
-  gap: 14px;
   justify-content:center;
   align-items:center;
-  margin-top: 24px;
   position:relative;
-
   width:100%;
-  min-height: 220px;              /* more room for NO to run */
-  padding: 14px;                  /* keep safe margins */
-  touch-action: manipulation;     /* ✅ IMPORTANT: allow taps on iPhone */
+  margin-top: 26px;
+
+  /* Big space = better dodging (desktop + mobile) */
+  min-height: 260px;
+
+  /* important for iOS touchmove */
+  touch-action: none;
 }
 
+/* Buttons */
 button{
   border:none;
   border-radius: 16px;
@@ -149,32 +161,44 @@ button{
   font-weight: 700;
   cursor:pointer;
   user-select:none;
-  -webkit-tap-highlight-color: transparent; /* nicer on iPhone */
-  min-width: 160px;
+  touch-action: manipulation;
+  min-width: 140px;
   transition: transform .12s ease, filter .12s ease;
-  position: relative;
-  z-index: 5; /* always above background */
 }
 
 button:active{ transform: scale(0.98); }
 
+/* YES stays centered */
 #yes{
+  position: relative;
+  z-index: 2;
   background: #22c55e;
   color: white;
   box-shadow: 0 12px 30px #22c55e55;
 }
 
-#no{
-  background: #ef4444;
-  color: white;
-  position:absolute;
-  left: 50%;
-  top: 16px; /* starts near top */
-  transform: translateX(-50%);
-  box-shadow: 0 12px 30px #ef444455;
+#yes:hover{
+  transform: translateY(-1px);
+  filter: brightness(1.05);
 }
 
-/* Result */
+/* NO starts above, centered */
+#no{
+  position:absolute;
+  left: 50%;
+  top: 30px;              /* ✅ good default start */
+  transform: translateX(-50%);
+  z-index: 3;
+
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 12px 30px #ef444455;
+
+  /* helps touch tracking */
+  touch-action: none;
+}
+
+/* Result box */
 .result{
   display:none;
   margin-top: 22px;
@@ -190,7 +214,10 @@ button:active{ transform: scale(0.98); }
   margin: 0 0 6px;
 }
 
-.small{ margin:0; opacity:.85; }
+.small{
+  margin:0;
+  opacity:.85;
+}
 
 .footer{
   margin-top: 16px;
@@ -221,7 +248,7 @@ button:active{ transform: scale(0.98); }
   to{ transform: translateY(-260px); opacity:0; }
 }
 
-/* ✅ iPhone portrait */
+/* ✅ PHONE PORTRAIT */
 @media (max-width: 520px){
   .card{
     width: 94vw;
@@ -232,26 +259,26 @@ button:active{ transform: scale(0.98); }
   h1{ font-size: 28px; }
   .subtitle{ font-size: 15px; }
 
+  /* make sure NO has space */
   .btns{
-    flex-direction: column;
-    min-height: 320px;      /* BIG space so NO can dodge */
-    gap: 18px;
-    padding: 18px;
+    min-height: 300px;
   }
 
   button{
-    width: min(340px, 88vw);
+    width: min(320px, 86vw);
     min-width: unset;
-    font-size: 16px;
+    font-size: 15px;
   }
 
-  /* start NO above YES but not covering it */
-  #no{
-    top: 20px;
-  }
-
-  /* keep YES lower */
+  /* push YES down a bit */
   #yes{
-    margin-top: 120px;
+    margin-top: 110px;
+  }
+
+  /* NO starts clearly above */
+  #no{
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
