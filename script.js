@@ -16,14 +16,14 @@ const hearts = document.getElementById("hearts");
 const bgHearts = document.getElementById("bgHearts");
 const bgSparkles = document.getElementById("bgSparkles");
 
-// === Dodge settings (mobile-first) ===
-const SAFE_FROM_FINGER = 135;
-const SAFE_FROM_YES = 170;
+// === Dodge settings (REALISTIC for phones) ===
+const SAFE_FROM_FINGER = 120; // ✅ 110–140 is perfect on iPhone
+const SAFE_FROM_YES = 170;    // keep NO away from YES
 const PADDING = 10;
-const MAX_TRIES = 140;
-const SMOOTH_MS = 180;
+const MAX_TRIES = 160;
+const SMOOTH_MS = 170;
 
-// Smooth movement
+// Smooth movement (no shaking)
 noBtn.style.transition = `left ${SMOOTH_MS}ms ease, top ${SMOOTH_MS}ms ease`;
 noBtn.style.willChange = "left, top";
 
@@ -43,6 +43,16 @@ function getPointFromEvent(e) {
   return p ? { x: p.clientX, y: p.clientY } : { x: e.clientX, y: e.clientY };
 }
 
+function isInsideArea(point) {
+  const area = btnArea.getBoundingClientRect();
+  return (
+    point.x >= area.left &&
+    point.x <= area.right &&
+    point.y >= area.top &&
+    point.y <= area.bottom
+  );
+}
+
 function fingerTooClose(point) {
   const btnC = center(noBtn.getBoundingClientRect());
   return dist(btnC, point) < SAFE_FROM_FINGER;
@@ -52,37 +62,48 @@ function pickSafePosition(point) {
   const area = btnArea.getBoundingClientRect();
   const btn = noBtn.getBoundingClientRect();
   const yes = yesBtn.getBoundingClientRect();
+
   const yesC = center(yes);
 
   const maxX = Math.max(PADDING, area.width - btn.width - PADDING);
   const maxY = Math.max(PADDING, area.height - btn.height - PADDING);
 
+  // If area is too small, just keep it somewhere safe
+  if (maxX <= PADDING + 2 || maxY <= PADDING + 2) {
+    return { x: PADDING, y: PADDING };
+  }
+
   const areaCenter = { x: area.left + area.width / 2, y: area.top + area.height / 2 };
   const finger = point || areaCenter;
 
+  // Bias away from finger direction
   const dirX = finger.x < areaCenter.x ? 0.75 : 0.25;
   const dirY = finger.y < areaCenter.y ? 0.75 : 0.25;
 
   for (let i = 0; i < MAX_TRIES; i++) {
     const x = clamp(
-      dirX * maxX + (Math.random() - 0.5) * (maxX * 0.75),
+      dirX * maxX + (Math.random() - 0.5) * (maxX * 0.7),
       PADDING,
       maxX
     );
     const y = clamp(
-      dirY * maxY + (Math.random() - 0.5) * (maxY * 0.75),
+      dirY * maxY + (Math.random() - 0.5) * (maxY * 0.7),
       PADDING,
       maxY
     );
 
     const c = { x: area.left + x + btn.width / 2, y: area.top + y + btn.height / 2 };
 
+    // Not near YES
     if (dist(c, yesC) < SAFE_FROM_YES) continue;
+
+    // Not near finger
     if (point && dist(c, point) < SAFE_FROM_FINGER) continue;
 
     return { x, y };
   }
 
+  // fallback
   return { x: PADDING, y: PADDING };
 }
 
@@ -94,22 +115,18 @@ function moveNoTo(point) {
   noBtn.style.top = pos.y + "px";
 }
 
-// ===== iPhone/Instagram browser fix =====
-// ✅ IMPORTANT: DO NOT preventDefault on touchstart (kills button clicks)
-// ✅ Only preventDefault on touchmove (when finger is sliding)
+// ===== Instagram/iPhone Fix: listen on DOCUMENT =====
 let rafLock = false;
 
-function onTouchStart(e) {
-  // don't block clicks
+function handleTouchMove(e) {
   const p = getPointFromEvent(e);
-  if (fingerTooClose(p)) moveNoTo(p);
-}
 
-function onTouchMove(e) {
-  const p = getPointFromEvent(e);
+  // only react when finger is inside the area
+  if (!isInsideArea(p)) return;
+
   if (!fingerTooClose(p)) return;
 
-  // Now we can block scroll so tracking works
+  // IMPORTANT: allow us to catch touchmove properly in iOS
   e.preventDefault();
 
   if (rafLock) return;
@@ -121,25 +138,23 @@ function onTouchMove(e) {
   });
 }
 
-// Track touches in the area
-btnArea.addEventListener("touchstart", onTouchStart, { passive: true });
-btnArea.addEventListener("touchmove", onTouchMove, { passive: false });
+document.addEventListener("touchmove", handleTouchMove, { passive: false });
+document.addEventListener("touchstart", (e) => {
+  const p = getPointFromEvent(e);
+  if (isInsideArea(p) && fingerTooClose(p)) moveNoTo(p);
+}, { passive: true });
 
-// If finger lands directly on NO
-noBtn.addEventListener(
-  "touchstart",
-  (e) => {
-    e.preventDefault();
-    moveNoTo(getPointFromEvent(e));
-  },
-  { passive: false }
-);
-
-// Desktop / modern browsers
+// Desktop fallback
 btnArea.addEventListener("pointermove", (e) => {
   const p = getPointFromEvent(e);
   if (fingerTooClose(p)) moveNoTo(p);
 });
+
+// If finger lands directly on NO
+noBtn.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  moveNoTo(getPointFromEvent(e));
+}, { passive: false });
 
 // Prevent NO click
 noBtn.addEventListener("click", (e) => {
@@ -164,10 +179,10 @@ function burstHearts(mult = 1) {
     const h = document.createElement("div");
     h.className = "heart";
     h.textContent = icons[Math.floor(Math.random() * icons.length)];
-    h.style.left = Math.random() * 90 + 5 + "%";
+    h.style.left = (Math.random() * 90 + 5) + "%";
     h.style.bottom = "-10px";
-    h.style.animationDuration = Math.random() * 1.2 + 1.4 + "s";
-    h.style.fontSize = Math.random() * 16 + 16 + "px";
+    h.style.animationDuration = (Math.random() * 1.2 + 1.4) + "s";
+    h.style.fontSize = (Math.random() * 16 + 16) + "px";
     hearts.appendChild(h);
     setTimeout(() => h.remove(), 2400);
   }
@@ -189,8 +204,8 @@ function spawnBgHeart() {
   h.className = "bg-heart";
   h.textContent = bgHeartIcons[Math.floor(Math.random() * bgHeartIcons.length)];
   h.style.left = Math.random() * 100 + "%";
-  h.style.fontSize = Math.random() * 18 + 14 + "px";
-  h.style.animationDuration = Math.random() * 10 + 14 + "s";
+  h.style.fontSize = (Math.random() * 18 + 14) + "px";
+  h.style.animationDuration = (Math.random() * 10 + 14) + "s";
   bgHearts.appendChild(h);
   setTimeout(() => h.remove(), 26000);
 }
@@ -200,9 +215,9 @@ function spawnSparkle() {
   const s = document.createElement("div");
   s.className = "bg-sparkle";
   s.style.left = Math.random() * 100 + "%";
-  const size = Math.random() * 5 + 3 + "px";
+  const size = (Math.random() * 5 + 3) + "px";
   s.style.width = s.style.height = size;
-  s.style.animationDuration = Math.random() * 6 + 8 + "s";
+  s.style.animationDuration = (Math.random() * 6 + 8) + "s";
   bgSparkles.appendChild(s);
   setTimeout(() => s.remove(), 16000);
 }
