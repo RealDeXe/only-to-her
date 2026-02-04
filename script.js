@@ -16,13 +16,8 @@ const hearts = document.getElementById("hearts");
 const bgHearts = document.getElementById("bgHearts");
 const bgSparkles = document.getElementById("bgSparkles");
 
-// NEW: Instagram input elements (must exist in HTML inside #result)
-const igInput = document.getElementById("igInput");
-const igSave = document.getElementById("igSave");
-const igDone = document.getElementById("igDone");
-
 // === Dodge settings (mobile-first) ===
-const SAFE_FROM_FINGER = 28;   // px distance to the NO button box before it runs
+const SAFE_FROM_FINGER = 28;   // px distance to NO rectangle before it runs
 const SAFE_FROM_YES = 100;     // keep NO away from YES
 const PADDING = 10;
 const MAX_TRIES = 180;
@@ -64,13 +59,13 @@ function isInsideArea(point) {
   );
 }
 
-// Finger close to the NO button (using rectangle distance, super reliable)
+// Finger close to NO button (super reliable)
 function fingerTooClose(point) {
   const rect = noBtn.getBoundingClientRect();
   return distPointToRect(point.x, point.y, rect) <= SAFE_FROM_FINGER;
 }
 
-// Find a safe place INSIDE btnArea, far from finger + far from YES
+// Find a safe place inside btnArea
 function pickSafePosition(point) {
   const area = btnArea.getBoundingClientRect();
   const btn = noBtn.getBoundingClientRect();
@@ -108,8 +103,8 @@ function pickSafePosition(point) {
 
     // Too close to finger
     if (point) {
-      const fingerDist = Math.hypot(c.x - finger.x, c.y - finger.y);
-      if (fingerDist < SAFE_FROM_FINGER + 30) continue;
+      const dFinger = Math.hypot(c.x - finger.x, c.y - finger.y);
+      if (dFinger < SAFE_FROM_FINGER + 30) continue;
     }
 
     return { x, y };
@@ -133,7 +128,7 @@ let rafLock = false;
 function globalTouchStart(e) {
   const p = getPointFromEvent(e);
 
-  // Only react if touch begins inside the buttons area OR directly on NO
+  // Only react if touch begins inside btnArea OR directly on NO
   if (!isInsideArea(p) && e.target !== noBtn) return;
 
   if (fingerTooClose(p)) moveNoTo(p);
@@ -148,7 +143,7 @@ function globalTouchMove(e) {
   // Only dodge if close to NO
   if (!fingerTooClose(p)) return;
 
-  // Stop scroll ONLY when we're dodging
+  // Stop scroll ONLY when dodging
   e.preventDefault();
 
   if (rafLock) return;
@@ -163,7 +158,7 @@ function globalTouchMove(e) {
 document.addEventListener("touchstart", globalTouchStart, { passive: true });
 document.addEventListener("touchmove", globalTouchMove, { passive: false });
 
-// Desktop / modern browsers fallback
+// Desktop fallback
 document.addEventListener("pointermove", (e) => {
   const p = getPointFromEvent(e);
   if (!isInsideArea(p)) return;
@@ -182,9 +177,6 @@ yesBtn.addEventListener("click", () => {
   btnArea.style.display = "none";
   burstHearts(1.4);
   celebrate();
-
-  // NEW: focus the instagram input if it exists
-  if (igInput) setTimeout(() => igInput.focus(), 250);
 });
 
 // Hearts burst
@@ -211,70 +203,6 @@ function celebrate() {
     { duration: 520, easing: "ease-out" }
   );
 }
-
-// ============================
-// NEW: Instagram capture + copy
-// ============================
-function cleanIg(val) {
-  let v = (val || "").trim();
-  if (!v) return "";
-  v = v.replace(/\s+/g, "");
-  if (!v.startsWith("@")) v = "@" + v.replace(/^@+/, "");
-  return v;
-}
-
-async function copyText(txt) {
-  try {
-    await navigator.clipboard.writeText(txt);
-    return true;
-  } catch {
-    // fallback
-    const ta = document.createElement("textarea");
-    ta.value = txt;
-    ta.style.position = "fixed";
-    ta.style.left = "-9999px";
-    document.body.appendChild(ta);
-    ta.select();
-    try {
-      document.execCommand("copy");
-      document.body.removeChild(ta);
-      return true;
-    } catch {
-      document.body.removeChild(ta);
-      return false;
-    }
-  }
-}
-
-igSave?.addEventListener("click", async () => {
-  const handle = cleanIg(igInput?.value);
-
-  if (!handle) {
-    if (igDone) {
-      igDone.style.display = "block";
-      igDone.textContent = "Type your @ first 😭";
-    }
-    return;
-  }
-
-  const copied = await copyText(handle);
-
-  if (igDone) {
-    igDone.style.display = "block";
-    igDone.textContent = copied
-      ? `Got you 😌 ${handle} (copied ✅)`
-      : `Got you 😌 ${handle}`;
-  }
-
-  // optional: lock after
-  if (igInput) igInput.disabled = true;
-  if (igSave) igSave.disabled = true;
-});
-
-// Enter submits
-igInput?.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") igSave?.click();
-});
 
 // Background decor (optional)
 const bgHeartIcons = ["💗", "💖", "💕", "💘", "❤️"];
