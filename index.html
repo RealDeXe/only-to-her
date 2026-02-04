@@ -6,11 +6,16 @@
   <title>Proposing</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
+  <!-- Background layers MUST be inside body -->
+  <div class="bg-hearts" id="bgHearts"></div>
+  <div class="bg-sparkles" id="bgSparkles"></div>
+
   <main class="card" id="card">
     <div class="hearts" id="hearts" aria-hidden="true"></div>
 
-    <h1>Hey <span class="name" id="herName"> Dodo </span> 💘</h1>
+    <h1>Hey <span class="name" id="herName">Dodo</span> 💘</h1>
     <p class="subtitle">Will you be my Valentine?</p>
 
     <section class="btns" id="btnArea" aria-label="Valentine choices">
@@ -23,11 +28,9 @@
       <p class="small" id="finalLine">You just made my day.</p>
     </section>
 
-    <p class="footer">Made with ❤️ By DeXe.RaR </p>
+    <p class="footer">Made with ❤️ By DeXe.RaR</p>
   </main>
 
   <script src="script.js" defer></script>
 </body>
-<div class="bg-hearts" id="bgHearts"></div>
-<div class="bg-sparkles" id="bgSparkles"></div>
 </html>
