@@ -18,7 +18,7 @@ const bgSparkles = document.getElementById("bgSparkles");
 
 // === Dodge settings (mobile-first) ===
 const SAFE_FROM_FINGER = 28;   // px distance to the NO button box before it runs
-const SAFE_FROM_YES = 140;     // keep NO away from YES
+const SAFE_FROM_YES = 100;     // keep NO away from YES
 const PADDING = 10;
 const MAX_TRIES = 180;
 const SMOOTH_MS = 170;
