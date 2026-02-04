@@ -178,6 +178,7 @@ button:active{ transform: scale(0.98); }
   top: 0;
   transform: translateX(-50%);
   box-shadow: 0 12px 30px #ef444455;
+  touch-action: none;
 }
 
 .result{
