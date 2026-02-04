@@ -8,9 +8,7 @@
   --text:#2b2b2b;
 }
 
-*{
-  box-sizing:border-box;
-}
+*{ box-sizing:border-box; }
 
 body{
   margin:0;
@@ -24,7 +22,8 @@ body{
   background-size: 300% 300%;
   animation: bgFlow 18s ease infinite;
 
-  overflow:hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Background animation */
@@ -34,7 +33,7 @@ body{
   100%{ background-position:0% 50%; }
 }
 
-/* Floating background layers */
+/* Background layers */
 .bg-hearts,
 .bg-sparkles{
   position:fixed;
@@ -44,152 +43,202 @@ body{
   z-index:0;
 }
 
+/* Floating hearts */
+.bg-heart{
+  position:absolute;
+  bottom:-40px;
+  opacity:.15;
+  animation: floatBg linear infinite;
+}
+
+@keyframes floatBg{
+  from{ transform:translateY(0); opacity:0; }
+  12%{ opacity:.16; }
+  to{ transform:translateY(-110vh); opacity:0; }
+}
+
+/* Sparkles */
+.bg-sparkle{
+  position:absolute;
+  top:-20px;
+  width:6px;
+  height:6px;
+  border-radius:999px;
+  opacity:.35;
+  background:#fff;
+  box-shadow:0 0 12px rgba(255,255,255,.7);
+  animation: sparkleFall linear infinite;
+}
+
+@keyframes sparkleFall{
+  from{ transform:translateY(-20px); opacity:0; }
+  15%{ opacity:.35; }
+  to{ transform:translateY(110vh); opacity:0; }
+}
+
 /* Card */
 .card{
   width:min(860px, 94vw);
-  background: var(--card);
+  background:var(--card);
   backdrop-filter: blur(10px);
-  border-radius: 28px;
-  padding: 36px 30px;
+  border-radius:28px;
+  padding:36px 30px;
   text-align:center;
   position:relative;
   z-index:2;
-
-  box-shadow:
-    0 30px 90px #00000026,
-    0 0 0 1px #ffffff33;
+  box-shadow:0 30px 90px rgba(0,0,0,.25);
 }
 
-/* Headings */
+/* Title */
 h1{
-  margin: 0 0 14px;
-  font-size: clamp(30px, 4.2vw, 48px);
-  color: var(--text);
+  margin:0 0 12px;
+  font-size:clamp(30px,4vw,46px);
 }
 
 .subtitle{
-  margin: 0 0 18px;
-  font-size: clamp(14px, 2vw, 18px);
-  color:#333;
+  margin-bottom:18px;
+  opacity:.85;
 }
 
 .name{
-  display:inline-block;
-  padding: 4px 10px;
-  border-radius: 999px;
+  padding:4px 10px;
   background:#fff;
-  border:1px solid #00000012;
+  border-radius:999px;
   font-weight:700;
 }
 
-/* ======================
-   PHOTO (FIXED PROPERLY)
-   ====================== */
-
-.photoBox{
-  margin-top:16px;
+/* Buttons area */
+.btns{
+  position:relative;
   width:100%;
+  margin-top:26px;
+  min-height:340px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  touch-action:none;
+  overflow:hidden;
+  border-radius:24px;
+}
+
+/* Buttons */
+button{
+  border:none;
+  border-radius:16px;
+  padding:14px 18px;
+  font-size:16px;
+  font-weight:700;
+  cursor:pointer;
+  user-select:none;
+  min-width:140px;
+}
+
+button:active{ transform:scale(.98); }
+
+/* YES */
+#yes{
+  position:relative;
+  z-index:2;
+  background:#22c55e;
+  color:#fff;
+  padding:18px 22px;
+  width:min(340px,86vw);
+  box-shadow:0 12px 30px rgba(34,197,94,.5);
+}
+
+/* NO */
+#no{
+  position:absolute;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:3;
+  background:#ef4444;
+  color:#fff;
+  padding:10px 14px;
+  width:min(190px,55vw);
+  font-size:14px;
+  box-shadow:0 12px 30px rgba(239,68,68,.5);
+  touch-action:none;
+}
+
+/* Result */
+.result{
+  display:none;
+  margin-top:22px;
+  padding:22px;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 12px 30px rgba(0,0,0,.1);
+}
+
+.big{
+  font-size:clamp(22px,3vw,34px);
+}
+
+.small{
+  opacity:.85;
+}
+
+/* Photo */
+.photoBox{
+  margin-top:14px;
   display:flex;
   justify-content:center;
 }
 
 #lovePhoto{
-  display:block;
-  width: min(480px, 100%);
-  height: clamp(180px, 38vh, 320px);
-  object-fit: cover;
-  border-radius: 20px;
-  border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 18px 45px rgba(0,0,0,0.16);
+  width:100%;
+  max-width:320px;
+  max-height:40vh;
+  object-fit:cover;
+  border-radius:18px;
+  box-shadow:0 14px 36px rgba(0,0,0,.18);
 }
 
-/* ======================
-   BUTTON AREA
-   ====================== */
-
-.btns{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  position:relative;
-  width:100%;
-  margin-top: 26px;
-  min-height: 320px;
+/* Hearts burst */
+.hearts{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
   overflow:hidden;
 }
 
-button{
-  border:none;
-  border-radius: 16px;
-  padding: 14px 18px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor:pointer;
-  min-width: 140px;
-}
-
-#yes{
-  background:#22c55e;
-  color:white;
-  width: min(340px, 86vw);
-  padding: 18px 22px;
-  font-size:17px;
-}
-
-#no{
+.heart{
   position:absolute;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#ef4444;
-  color:white;
-  width: min(220px, 62vw);
-  padding: 12px 16px;
-  font-size:14px;
+  animation: floatUp linear forwards;
 }
 
-/* Result box */
-.result{
-  display:none;
-  margin-top: 22px;
-  padding: 22px;
-  border-radius: 22px;
-  background:#fff;
-  border:1px solid #00000010;
+@keyframes floatUp{
+  from{ transform:translateY(20px); opacity:0; }
+  15%{ opacity:1; }
+  to{ transform:translateY(-260px); opacity:0; }
 }
 
-/* ======================
-   MOBILE OPTIMIZATION
-   ====================== */
+/* Footer */
+.footer{
+  margin-top:16px;
+  font-size:12px;
+  opacity:.65;
+}
 
+/* 📱 Mobile */
 @media (max-width:520px){
   .card{
-    width:94vw;
-    padding:28px 20px;
-    border-radius:22px;
-  }
-
-  #lovePhoto{
-    height: clamp(180px, 32vh, 260px);
+    padding:26px 18px;
   }
 
   .btns{
-    min-height: 430px;
+    min-height:460px;
   }
 
   #yes{
-    margin-top:170px;
-    width: min(360px, 90vw);
+    margin-top:180px;
+    width:90vw;
   }
 
-  #no{
-    width: min(200px, 58vw);
-  }
-}
-
-/* Very small phones */
-@media (max-width:360px){
   #lovePhoto{
-    height:220px;
+    max-width:260px;
+    max-height:32vh;
   }
 }
