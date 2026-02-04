@@ -18,7 +18,6 @@ body{
   justify-content:center;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 
-  /* Animated gradient background */
   background: linear-gradient(120deg, var(--bg1), var(--bg2), var(--bg3), var(--bg4));
   background-size: 300% 300%;
   animation: bgFlow 18s ease infinite;
@@ -74,6 +73,9 @@ body{
   opacity:0.35;
   animation: sparkleFall linear infinite;
   filter: blur(0.2px);
+
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 0 12px rgba(255,255,255,0.7);
 }
 
 @keyframes sparkleFall{
@@ -84,13 +86,12 @@ body{
 
 /* Card on top */
 .card{
-  width:min(860px, 94vw);      /* bigger */
-  min-height: 360px;           /* a bit taller */
+  width:min(860px, 94vw);
   background: var(--card);
   backdrop-filter: blur(10px);
   border: 1px solid #ffffff90;
-  border-radius: 28px;         /* rounder */
-  padding: 36px 30px;          /* more space */
+  border-radius: 28px;
+  padding: 36px 30px;
   text-align:center;
   position:relative;
   z-index:2;
@@ -135,26 +136,30 @@ h1{
   font-weight: 700;
 }
 
+/* ✅ BUTTON AREA: give it REAL room so NO can run on portrait */
 .btns{
   display:flex;
   gap: 14px;
   justify-content:center;
-  margin-top: 24px;    /* more spacing */
+  align-items:center;
+  margin-top: 24px;
   position:relative;
-  height: 96px;        /* taller */
-  touch-action: none;
+
+  width: 100%;
+  min-height: 170px;     /* 🔥 important */
+  touch-action: none;    /* allow touchmove */
 }
 
 button{
   border:none;
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 14px 18px;
   font-size: 16px;
   font-weight: 700;
   cursor:pointer;
   user-select:none;
   touch-action: manipulation;
-  min-width: 130px;
+  min-width: 140px;
   transition: transform .12s ease, filter .12s ease;
 }
 
@@ -176,12 +181,13 @@ button:active{ transform: scale(0.98); }
   color: white;
   position:absolute;
   left: 52%;
-  top: 0;
+  top: 10px;
   transform: translateX(-50%);
   box-shadow: 0 12px 30px #ef444455;
   touch-action: none;
 }
 
+/* Result box */
 .result{
   display:none;
   margin-top: 22px;
@@ -231,34 +237,33 @@ button:active{ transform: scale(0.98); }
   to{ transform: translateY(-260px); opacity:0; }
 }
 
-.bg-sparkle{
-  background: rgba(255,255,255,0.9);
-  box-shadow: 0 0 12px rgba(255,255,255,0.7);
-}
-
-@media (max-width: 600px){
+/* ✅ PHONE PORTRAIT: stack buttons + give extra space for dodging */
+@media (max-width: 520px){
   .card{
     width: 94vw;
-    min-height: auto;
     padding: 28px 20px;
     border-radius: 22px;
   }
 
-  h1{
-    font-size: 28px;
-  }
-
-  .subtitle{
-    font-size: 15px;
-  }
+  h1{ font-size: 28px; }
+  .subtitle{ font-size: 15px; }
 
   .btns{
-    height: 110px; /* more room for dodging */
+    flex-direction: column;
+    min-height: 260px;   /* 🔥 MOST IMPORTANT for iPhone portrait */
+    gap: 16px;
   }
 
   button{
-    min-width: 120px;
+    width: min(320px, 86vw);
+    min-width: unset;
     font-size: 15px;
   }
-}
 
+  /* NO starts lower so it doesn't sit on YES */
+  #no{
+    left: 50%;
+    top: 90px;
+    transform: translateX(-50%);
+  }
+}
