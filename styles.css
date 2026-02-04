@@ -84,7 +84,7 @@ body{
   to{ transform: translateY(110vh) translateX(40px); opacity:0; }
 }
 
-/* Card on top */
+/* Card */
 .card{
   width:min(860px, 94vw);
   background: var(--card);
@@ -102,7 +102,7 @@ body{
     0 0 110px #ffffff35;
 }
 
-/* extra glow ring */
+/* Glow ring */
 .card::before{
   content:"";
   position:absolute;
@@ -136,20 +136,23 @@ h1{
   font-weight: 700;
 }
 
-/* ✅ BUTTON AREA: give it REAL room so NO can run on portrait */
+/* ✅ BUTTON AREA: enough room for NO to dodge */
 .btns{
   display:flex;
-  gap: 14px;
   justify-content:center;
   align-items:center;
-  margin-top: 24px;
   position:relative;
+  width:100%;
+  margin-top: 26px;
 
-  width: 100%;
-  min-height: 170px;     /* 🔥 important */
-  touch-action: none;    /* allow touchmove */
+  /* Big space = better dodging (desktop + mobile) */
+  min-height: 260px;
+
+  /* important for iOS touchmove */
+  touch-action: none;
 }
 
+/* Buttons */
 button{
   border:none;
   border-radius: 16px;
@@ -165,7 +168,10 @@ button{
 
 button:active{ transform: scale(0.98); }
 
+/* YES stays centered */
 #yes{
+  position: relative;
+  z-index: 2;
   background: #22c55e;
   color: white;
   box-shadow: 0 12px 30px #22c55e55;
@@ -176,14 +182,19 @@ button:active{ transform: scale(0.98); }
   filter: brightness(1.05);
 }
 
+/* NO starts above, centered */
 #no{
+  position:absolute;
+  left: 50%;
+  top: 30px;              /* ✅ good default start */
+  transform: translateX(-50%);
+  z-index: 3;
+
   background: #ef4444;
   color: white;
-  position:absolute;
-  left: 52%;
-  top: 10px;
-  transform: translateX(-50%);
   box-shadow: 0 12px 30px #ef444455;
+
+  /* helps touch tracking */
   touch-action: none;
 }
 
@@ -237,7 +248,7 @@ button:active{ transform: scale(0.98); }
   to{ transform: translateY(-260px); opacity:0; }
 }
 
-/* ✅ PHONE PORTRAIT: stack buttons + give extra space for dodging */
+/* ✅ PHONE PORTRAIT */
 @media (max-width: 520px){
   .card{
     width: 94vw;
@@ -248,10 +259,9 @@ button:active{ transform: scale(0.98); }
   h1{ font-size: 28px; }
   .subtitle{ font-size: 15px; }
 
+  /* make sure NO has space */
   .btns{
-    flex-direction: column;
-    min-height: 260px;   /* 🔥 MOST IMPORTANT for iPhone portrait */
-    gap: 16px;
+    min-height: 300px;
   }
 
   button{
@@ -260,10 +270,15 @@ button:active{ transform: scale(0.98); }
     font-size: 15px;
   }
 
-  /* NO starts lower so it doesn't sit on YES */
+  /* push YES down a bit */
+  #yes{
+    margin-top: 110px;
+  }
+
+  /* NO starts clearly above */
   #no{
+    top: 16px;
     left: 50%;
-    top: 90px;
     transform: translateX(-50%);
   }
 }
