@@ -1,5 +1,5 @@
 // === Customize here ===
-const NAME = "lilyy🎀";
+const NAME = "lilyy";
 const FINAL_MESSAGE = "😌 so this is a yes bkhatrk yak hh ?";
 
 document.getElementById("herName").textContent = NAME;
